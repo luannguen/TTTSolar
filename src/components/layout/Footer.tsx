@@ -1,10 +1,16 @@
 import Link from "next/link";
 import { Sun, Globe, MessageCircle, Mail, Phone, MapPin, Link2 } from "lucide-react";
+import { Newsletter } from "../sections/Newsletter";
 
 export function Footer() {
   return (
-    <footer className="bg-[#0a0a0a] border-t border-white/10 pt-20 pb-10">
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12">
+    <footer className="pt-32 pb-16 bg-[#0a0a0a] border-t border-white/5">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="mb-32">
+          <Newsletter />
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16">
         {/* Company Info */}
         <div className="space-y-6">
           <Link href="/" className="flex items-center gap-2 group">
@@ -62,6 +68,7 @@ export function Footer() {
               <span>hello@tttsolar.com</span>
             </li>
           </ul>
+        </div>
         </div>
       </div>
 
