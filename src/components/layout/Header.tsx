@@ -3,11 +3,19 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Sun } from "lucide-react";
+import { Menu, X, Sun, ChevronDown } from "lucide-react";
 
 const navLinks = [
   { name: "Home", href: "/" },
   { name: "About", href: "/about" },
+  { 
+    name: "Khám phá", 
+    href: "#",
+    subItems: [
+      { name: "Đội ngũ", href: "/team" },
+      { name: "Sự kiện", href: "/events" },
+    ]
+  },
   { name: "Services", href: "/services" },
   { name: "Projects", href: "/projects" },
   { name: "News", href: "/news" },
@@ -18,6 +26,7 @@ const navLinks = [
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -45,13 +54,42 @@ export function Header() {
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
-            <Link 
+            <div 
               key={link.name} 
-              href={link.href}
-              className="text-sm font-medium text-gray-300 hover:text-yellow-500 transition-colors"
+              className="relative group/item"
+              onMouseEnter={() => setActiveDropdown(link.name)}
+              onMouseLeave={() => setActiveDropdown(null)}
             >
-              {link.name}
-            </Link>
+              {link.subItems ? (
+                <>
+                  <button className="flex items-center gap-1 text-sm font-medium text-gray-300 hover:text-yellow-500 transition-colors py-2">
+                    {link.name}
+                    <ChevronDown size={14} className={`transition-transform duration-300 ${activeDropdown === link.name ? 'rotate-180' : ''}`} />
+                  </button>
+                  {/* Dropdown Menu */}
+                  <div className={`absolute top-full left-0 w-48 bg-[#0f0f0f] border border-white/10 rounded-xl py-2 shadow-2xl transition-all duration-300 origin-top ${
+                    activeDropdown === link.name ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible'
+                  }`}>
+                    {link.subItems.map((sub) => (
+                      <Link 
+                        key={sub.name}
+                        href={sub.href}
+                        className="block px-4 py-2 text-sm text-gray-400 hover:text-yellow-500 hover:bg-white/5 transition-colors"
+                      >
+                        {sub.name}
+                      </Link>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <Link 
+                  href={link.href}
+                  className="text-sm font-medium text-gray-300 hover:text-yellow-500 transition-colors py-2"
+                >
+                  {link.name}
+                </Link>
+              )}
+            </div>
           ))}
         </nav>
 
@@ -73,20 +111,42 @@ export function Header() {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 bg-black/95 backdrop-blur-xl border-b border-white/10 p-6 space-y-4 animate-in slide-in-from-top-4">
+        <div className="md:hidden absolute top-full left-0 right-0 bg-black/95 backdrop-blur-xl border-b border-white/10 p-6 space-y-4 animate-in slide-in-from-top-4 max-h-[80vh] overflow-y-auto">
           {navLinks.map((link) => (
-            <Link 
-              key={link.name} 
-              href={link.href}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block text-lg font-medium text-white hover:text-yellow-500"
-            >
-              {link.name}
-            </Link>
+            <div key={link.name} className="space-y-2">
+              {link.subItems ? (
+                <>
+                  <div className="text-lg font-medium text-yellow-500/50 uppercase text-xs tracking-widest pt-2">
+                    {link.name}
+                  </div>
+                  {link.subItems.map((sub) => (
+                    <Link 
+                      key={sub.name} 
+                      href={sub.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="block text-lg font-medium text-white hover:text-yellow-500 pl-4"
+                    >
+                      {sub.name}
+                    </Link>
+                  ))}
+                </>
+              ) : (
+                <Link 
+                  key={link.name} 
+                  href={link.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block text-lg font-medium text-white hover:text-yellow-500"
+                >
+                  {link.name}
+                </Link>
+              )}
+            </div>
           ))}
-          <Button className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold h-12">
-            Get a Quote
-          </Button>
+          <div className="pt-4">
+            <Button className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold h-12">
+              Get a Quote
+            </Button>
+          </div>
         </div>
       )}
     </header>
